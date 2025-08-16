@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Campaign Message Report</title>
+    <link href="/css/campaignmessagereport.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+
+<div layout:fragment="content" x-data="campaignMessageApp()">
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Campaign Message Report</h3>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div x-show="loading" id="progressContainer">
+                    <div id="loader"></div>
+                </div>
+
+                <form @submit.prevent="searchCampaignMessages" id="campaignMessageForm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- Property ID -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">Property ID</label>
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               class="form-control"
+                                               x-model="searchDTO.propertyId"
+                                               placeholder="Enter property ID"
+                                               pattern="[0-9]*">
+                                    </div>
+                                </div>
+
+                                <!-- Campaign ID -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">Campaign ID</label>
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               class="form-control"
+                                               x-model="searchDTO.campaignId"
+                                               placeholder="Enter campaign ID"
+                                               pattern="[0-9]*">
+                                    </div>
+                                </div>
+
+                                <!-- Campaign Name -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">Campaign Name</label>
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               class="form-control"
+                                               x-model="searchDTO.campaignName"
+                                               placeholder="Enter campaign name">
+                                    </div>
+                                </div>
+
+                                <!-- From Date -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">From Date</label>
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               class="form-control"
+                                               x-ref="fromDate"
+                                               x-model="searchDTO.sentFromDate"
+                                               data-flatpickr
+                                               required>
+                                    </div>
+                                </div>
+
+                                <!-- To Date -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">To Date</label>
+                                    <div class="col-md-4">
+                                        <input type="text"
+                                               class="form-control"
+                                               x-ref="toDate"
+                                               x-model="searchDTO.sentToDate"
+                                               data-flatpickr
+                                               required>
+                                    </div>
+                                </div>
+
+                                <!-- Permission -->
+                                <div class="mb-3 row align-items-center">
+                                    <label class="col-md-2 col-form-label">Permission</label>
+                                    <div class="col-md-4">
+                                        <select class="form-control" x-model="searchDTO.hasPermission">
+                                            <option value="1">All</option>
+                                            <option value="2">Yes</option>
+                                            <option value="3">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button type="button" class="btn btn-secondary ms-2" @click="clearForm">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+            <!-- Results Table -->
+            <div class="card card-secondary mt-4" x-show="results && results.length > 0">
+                <div class="card-body p-0">
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-sm small">
+                                <thead>
+                                <tr>
+                                    <th>Message ID</th>
+                                    <th>Sent Date</th>
+                                    <th>Campaign ID</th>
+                                    <th>Campaign Name</th>
+                                    <th>Property ID</th>
+                                    <th>Property Name</th>
+                                    <th>EWS Provider</th>
+                                    <th>EWS Status</th>
+                                    <th>Permission Date</th>
+                                    <th>Dismiss Date</th>
+                                    <th>Unsubscribe Date</th>
+                                    <th>Consultant</th>
+                                    <th>Feedback Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <template x-for="message in results" :key="message.id">
+                                    <tr>
+                                        <td x-text="message.id"></td>
+                                        <td x-text="message.sentAt"></td>
+                                        <td x-text="message.campaignId"></td>
+                                        <td x-text="message.name"></td>
+                                        <td x-text="message.propertyId"></td>
+                                        <td x-text="message.propertyName"></td>
+                                        <td x-text="message.provider"></td>
+                                        <td x-text="message.status"></td>
+                                        <td x-text="message.permissionTimestamp"></td>
+                                        <td x-text="message.dismissTopicTimestamp"></td>
+                                        <td x-text="message.unsubscribeTimestamp"></td>
+                                        <td x-text="message.fromName"></td>
+                                        <td x-text="getFeedbackStatus(message)"></td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>TOTAL</th>
+                                    <th class="ps-2" x-text="'Sent: ' + summary.totalSent"></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="ps-2" x-text="'Opened: ' + summary.totalOpened"></th>
+                                    <th class="ps-2" x-text="'Open Rate: ' + summary.openRate.toFixed(2) + '%'"></th>
+                                    <th class="ps-2" x-text="'Permissions: ' + summary.totalPermissions"></th>
+                                    <th class="ps-2" x-text="'Permission Rate: ' + summary.permissionRate.toFixed(2) + '%'"></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="/js/campaignmessagereport.js"></script>
+</th:block>
+
+</body>
+</html>

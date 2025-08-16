@@ -1,0 +1,103 @@
+/* ================= LOADER STYLES ================= */
+#progressContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 1050;
+}
+
+#loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ================= TABLE CONTAINER ================= */
+.table-container {
+  position: relative;
+  width: 100%;
+}
+
+.table-responsive {
+  max-height: 70vh;
+  overflow: auto;
+  display: block;
+}
+
+/* ================= TABLE STRUCTURE ================= */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+/* HEADER STYLES - BLACK BORDER SOLUTION */
+.table thead {
+  border-bottom: 2px solid #000; /* Black border below header */
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+  white-space: nowrap;
+  padding: 0.75rem;
+  border-bottom: none; /* Remove default borders */
+}
+
+/* BODY STYLES */
+.table tbody td {
+  padding: 0.5rem;
+  white-space: nowrap;
+  border-top: 1px solid #dee2e6;
+}
+
+/* FOOTER STYLES */
+.table tfoot th {
+  position: sticky;
+  bottom: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+  white-space: nowrap;
+  padding: 0.75rem;
+  border-top: 2px solid #dee2e6;
+}
+
+/* ================= INTERACTIVE ELEMENTS ================= */
+.table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+/* ================= COLUMN WIDTHS ================= */
+.table th:nth-child(1),
+.table td:nth-child(1) { min-width: 100px; } /* Message ID */
+.table th:nth-child(2),
+.table td:nth-child(2) { min-width: 120px; } /* Sent Date */
+.table th:nth-child(4),
+.table td:nth-child(4) { min-width: 150px; } /* Campaign Name */
+.table th:nth-child(6),
+.table td:nth-child(6) { min-width: 150px; } /* Property Name */
+.table th:nth-child(13),
+.table td:nth-child(13) { min-width: 120px; } /* Feedback Status */
+
+/* ================= RESPONSIVE ADJUSTMENTS ================= */
+@media (max-width: 768px) {
+  .table-responsive {
+    max-height: 60vh;
+  }
+}

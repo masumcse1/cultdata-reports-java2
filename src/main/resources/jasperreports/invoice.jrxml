@@ -1,0 +1,182 @@
+<!-- Created with Jaspersoft Studio version 7.0.2.final using JasperReports Library version 7.0.2-31532122640f516c6d17238ae0e41a08113d5ac0  -->
+<jasperReport name="MonthlyInvoice" language="java" columnCount="1" pageWidth="800" pageHeight="842" orientation="Landscape" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4e83130c-7ec4-4176-bb2d-3a2aeafbc7a4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.3" value="lastPageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.cell.border" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.page.margins=true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.column.width.ratio" value="1.10f"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.create.custom.palette" value="false"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<query language="SQL"><![CDATA[select client_id,invoice_name,period_from,period_to,generated_date,total_net,currency,amount_in_eur,convertedcurrency,client_name,distributionManagerName  from inventory.invoice;]]></query>
+	<field name="client_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="client_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="client_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="invoice_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="invoice_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoice_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="period_from" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="period_from"/>
+		<property name="com.jaspersoft.studio.field.label" value="period_from"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="period_to" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="period_to"/>
+		<property name="com.jaspersoft.studio.field.label" value="period_to"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="generated_date" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="generated_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="generated_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="total_net" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="total_net"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_net"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="currency" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currency"/>
+		<property name="com.jaspersoft.studio.field.label" value="currency"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="amount_in_eur" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="amount_in_eur"/>
+		<property name="com.jaspersoft.studio.field.label" value="amount_in_eur"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="invoice"/>
+	</field>
+	<field name="convertedcurrency" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="distributionManagerName" class="java.lang.String"/>
+	<variable name="total_net1" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{total_net}]]></expression>
+	</variable>
+	<variable name="convertedcurrency1" calculation="Count" class="java.lang.Integer">
+		<expression><![CDATA[$F{convertedcurrency}]]></expression>
+	</variable>
+	<variable name="amount_in_eur1" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{amount_in_eur}]]></expression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="38" splitType="Stretch">
+		<element kind="staticText" uuid="f7be51e8-7c97-4565-b9eb-aa1a021453e4" x="214" y="5" width="80" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Invoice ID]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3863fd1f-2de9-4440-b2c3-baedaeab568d"/>
+		</element>
+		<element kind="staticText" uuid="f5b7087b-819f-49f8-b7fd-431049674d7a" x="464" y="5" width="64" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Generated Date]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5fbbc322-915d-4825-a37e-12ae4df89698"/>
+		</element>
+		<element kind="staticText" uuid="713f0be3-5607-4541-8a8f-7d422e92131c" x="-20" y="5" width="46" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Client ID]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8b68e16d-f623-4f6c-be14-9660bf188835"/>
+		</element>
+		<element kind="staticText" uuid="320592d7-9f8b-4ae2-94ab-27400cf2e761" x="717" y="5" width="60" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[ Currency]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5a50b013-70fd-4e2c-a96c-ca95ee87c36d"/>
+		</element>
+		<element kind="staticText" uuid="4c03448d-9bf6-4033-97f2-a99b0961c942" x="294" y="5" width="90" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Period from]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="85141d31-469a-435a-aba0-0223e340aef4"/>
+		</element>
+		<element kind="staticText" uuid="c35a9ed8-3d5b-4cab-870b-b20a3fc70722" x="528" y="5" width="80" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Revenue Amount]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cac861c2-451a-47da-abb0-74800e108123"/>
+		</element>
+		<element kind="staticText" uuid="7ef87bbc-7b76-47a7-9689-79ebe4345131" x="608" y="5" width="50" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Currency]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d71f930-318a-4258-9537-b05bc0301ac2"/>
+		</element>
+		<element kind="staticText" uuid="7f6f1398-3031-470a-82e3-9d23a11ad5d4" x="384" y="5" width="80" height="30" fontName="Calibri" fontSize="11.0">
+			<text><![CDATA[Period to]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a8ae1b0-4d45-4fd9-ba35-484eb589d1fd"/>
+		</element>
+		<element kind="staticText" uuid="0beddfee-dc8a-4a57-929e-a3b8c8120d0f" x="658" y="5" width="59" height="30">
+			<text><![CDATA[Amount in EUR]]></text>
+		</element>
+		<element kind="staticText" uuid="e69fae7a-4cc2-4e9d-973c-a6bd0e82eaa7" x="26" y="5" width="100" height="30">
+			<text><![CDATA[client_name]]></text>
+		</element>
+		<element kind="staticText" uuid="f1a9e37e-a5be-474b-adf6-25c0f4f7749d" x="126" y="5" width="88" height="30">
+			<text><![CDATA[Manager Name]]></text>
+		</element>
+	</title>
+	<detail>
+		<band height="49" splitType="Stretch">
+			<element kind="textField" uuid="a45ac37a-b4a2-42a0-86f2-06539751d042" x="-20" y="0" width="46" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{client_id}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8b68e16d-f623-4f6c-be14-9660bf188835"/>
+			</element>
+			<element kind="textField" uuid="31f55828-8a45-432a-9be2-3b50fb8e8e09" x="214" y="0" width="80" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{invoice_name}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3863fd1f-2de9-4440-b2c3-baedaeab568d"/>
+			</element>
+			<element kind="textField" uuid="f561dae4-11db-403d-9ebd-0524d7d9ef62" x="294" y="0" width="90" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{period_from}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="85141d31-469a-435a-aba0-0223e340aef4"/>
+			</element>
+			<element kind="textField" uuid="9793348d-8fa2-4cee-8fd9-1e0976f7e6a0" x="384" y="0" width="80" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{period_to}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a8ae1b0-4d45-4fd9-ba35-484eb589d1fd"/>
+			</element>
+			<element kind="textField" uuid="b4e4afa7-2534-40a9-8c05-a41eb706fc24" x="464" y="0" width="64" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{generated_date}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5fbbc322-915d-4825-a37e-12ae4df89698"/>
+			</element>
+			<element kind="textField" uuid="0ace9238-eb1f-49ae-8584-ee32e158a66a" x="528" y="0" width="80" height="30" fontName="Calibri" fontSize="11.0" pattern="###0.00">
+				<expression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.GERMANY)).format($F{total_net})]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cac861c2-451a-47da-abb0-74800e108123"/>
+			</element>
+			<element kind="textField" uuid="e1277db7-1b9d-42f2-9a1c-2b06afce5984" x="608" y="0" width="50" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{currency}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8d71f930-318a-4258-9537-b05bc0301ac2"/>
+			</element>
+			<element kind="textField" uuid="43a746b4-3ac6-4847-9135-198bdf69b752" x="717" y="0" width="60" height="30" fontName="Calibri" fontSize="11.0">
+				<expression><![CDATA[$F{convertedcurrency}]]></expression>
+			</element>
+			<element kind="textField" uuid="06d563d8-37fe-434d-9764-12763d34591d" x="658" y="0" width="59" height="30">
+				<expression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.GERMANY)).format($F{amount_in_eur})]]></expression>
+			</element>
+			<element kind="textField" uuid="df1e0fea-32ee-44fc-9733-2acb44eadae4" x="26" y="0" width="100" height="30">
+				<expression><![CDATA[$F{client_name}]]></expression>
+			</element>
+			<element kind="textField" uuid="d491b264-b6fa-4a25-bd0f-c9f8b435f39e" x="126" y="0" width="88" height="30">
+				<expression><![CDATA[$F{distributionManagerName}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<summary height="54" splitType="Stretch">
+		<element kind="staticText" uuid="d732ee74-9568-4532-b715-fd06f5a1e016" x="528" y="0" width="130" height="30" fontName="Calibri">
+			<text><![CDATA[TOTAL REVENUE:]]></text>
+		</element>
+		<element kind="textField" uuid="3171f1c1-5064-4865-8238-993dafd77e7d" x="717" y="0" width="60" height="30">
+			<expression><![CDATA[$F{convertedcurrency}]]></expression>
+		</element>
+		<element kind="textField" uuid="c0253d02-3283-41f1-b8a2-87544c16da8c" x="658" y="0" width="59" height="30">
+			<expression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.GERMANY)).format($V{amount_in_eur1})]]></expression>
+		</element>
+	</summary>
+</jasperReport>

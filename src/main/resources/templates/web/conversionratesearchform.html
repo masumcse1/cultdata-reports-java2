@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversion Rate</title>
+    <link href="/css/conversionrate.css" rel="stylesheet">
+    <link href="/css/tomselect-custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+
+<div layout:fragment="content" x-data="conversionRateApp()">
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">CultBooking-Conversion Rate</h3>
+                </div>
+
+                <div x-show="loading" id="progressContainer">
+                    <div id="loader"></div>
+                </div>
+
+                <form @submit.prevent="searchConversionRates" id="conversionForm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3 row align-items-center">
+                                    <label for="clientId" class="col-md-2 col-form-label">CultSwitch Property Id</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="clientId" x-model="searchDTO.clientId"
+                                               placeholder="Enter CultSwitch Property Id" pattern="[0-9]*">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row align-items-center">
+                                    <label for="distributionManagers" class="col-md-2 col-form-label">Distribution Manager(s)</label>
+                                    <div class="col-md-4">
+                                        <select id="distributionManagers" x-model="searchDTO.distributionManagers"
+                                                placeholder="Select..." multiple>
+                                            <template x-for="dm in distributionManagers" :key="dm.id">
+                                                <option :value="dm.id" x-text="dm.name"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row align-items-center">
+                                    <label  class="col-md-2 col-form-label">From Date</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="fromDate"
+                                               x-ref="fromDate" x-model="searchDTO.fromDate"
+                                               data-flatpickr required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row align-items-center">
+                                    <label  class="col-md-2 col-form-label">To Date</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="toDate"
+                                               x-ref="toDate" x-model="searchDTO.toDate"
+                                               data-flatpickr required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row align-items-center">
+                                    <label for="excludeTestProperties" class="col-md-2 col-form-label">Exclude Test Properties</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="excludeTestProperties" x-model="searchDTO.excludeTestProperties">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="channelId" x-model="searchDTO.channelId" value="58078"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <button type="button" class="btn btn-secondary ms-2" @click="clearForm">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card card-secondary mt-4" x-show="sortedResults && sortedResults.length > 0">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <div class="card-header d-flex align-items-center">
+                            <input type="text"
+                                   x-model="searchQuery"
+                                   placeholder="Search ..."
+                                   class="form-control w-25 ms-auto"/>
+                            <button type="button" class="btn btn-success ms-2" @click="exportToCSV" x-show="results && results.length > 0">
+                                <i class="fas fa-file-export"></i> Export CSV
+                            </button>
+                        </div>
+                        <table class="table table-striped table-bordered table-sm small">
+                            <thead>
+                            <tr>
+                                <th @click="sort('client.id')" class="sortable">Client ID <span class="sort-icon">↕</span></th>
+                                <th>Channel ID</th>
+                                <th>Date</th>
+                                <th @click="sort('noOfAvailabilitySearch')" class="sortable">Searches <span class="sort-icon">↕</span></th>
+                                <th @click="sort('responseTime')" class="sortable">Average Response Time (ms) <span class="sort-icon">↕</span></th>
+                                <th @click="sort('noOfUniqueVisitors')" class="sortable">Unique Visitors <span class="sort-icon">↕</span></th>
+                                <th @click="sort('numberOfBookings')" class="sortable">Bookings <span class="sort-icon">↕</span></th>
+                                <th @click="sort('uniqueVisitorRate')" class="sortable">Searches/Visitors <span class="sort-icon">↕</span></th>
+                                <th @click="sort('conversionRate')" class="sortable">Conversion Rate <span class="sort-icon">↕</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <template x-for="row in sortedResults" :key="row.client.id + '-' + row.period">
+                                <tr>
+                                    <td  x-text="row.client.id"></td>
+                                    <td  x-text="row.channel.id"></td>
+                                    <td  x-text="row.period"></td>
+                                    <td class="text-end"  x-text="row.noOfAvailabilitySearch"></td>
+                                    <td class="text-end"  x-text="formatOneDecimal(row.responseTime)"></td>
+                                    <td class="text-end"  x-text="row.noOfUniqueVisitors"></td>
+                                    <td class="text-end"  x-text="row.numberOfBookings"></td>
+                                    <td class="text-end"  x-text="row.uniqueVisitorRate"></td>
+                                    <td class="text-end"  x-text="row.conversionRate"></td>
+                                </tr>
+                            </template>
+                            </tbody>
+                            <tfoot class="thead-dark">
+                            <tr>
+                                <th >TOTAL</th>
+                                <th  x-text="'Clients: (' + totalConversion.totalNoClientCount + ')'"></th>
+                                <th></th>
+                                <th class="text-end"   x-text="totalConversion.totalNoOfAvailabilitySearch"></th>
+                                <th class="text-end"   x-text="totalConversion.averageResponseTime"></th>
+                                <th class="text-end"   x-text="totalConversion.totalNoOfUniqueVisitors"></th>
+                                <th class="text-end"   x-text="totalConversion.totalBooking"></th>
+                                <th class="text-end"   x-text="totalConversion.totalUniqueVisitorRate"></th>
+                                <th class="text-end"   x-text="totalConversion.totalConversionRate"></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                        <!--<div class="alert alert-info mt-3 mb-0 p-2 small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            -->
+                        <div class="text-muted small mt-2 mb-3" x-show="totalConversion.converisondatamissing">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Note: Some days don't have response times. These days are ignored in the "CultBooking-Conversion Rate" report.
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="/js/conversionratesearchform.js"></script>
+</th:block>
+
+</body>
+</html>

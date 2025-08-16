@@ -1,0 +1,16 @@
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <div th:if="${#authentication}" class="d-flex align-items-center">
+                <span class="nav-link fw-bold" th:text="${#authentication.principal.fullusername}"></span>
+                <a class="nav-link fw-bold" href="/logout">Sign out</a>
+            </div>
+            <div th:unless="${#authentication}" class="d-flex align-items-center">
+                <span class="nav-link">Not logged in</span>
+                <span class="nav-link" th:text="${#authentication?.name}">Email</span>
+            </div>
+        </li>
+    </ul>
+</nav>

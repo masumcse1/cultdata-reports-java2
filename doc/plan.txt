@@ -1,0 +1,4 @@
+Release no , build no
+validation
+date time zone handle
+ browser compability check

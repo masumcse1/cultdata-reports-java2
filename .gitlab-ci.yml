@@ -1,0 +1,55 @@
+stages:
+  - build_staging  
+  - deploy_staging
+  - build_prod
+  - deploy_prod
+
+
+build_staging:
+  stage:  build_staging
+  tags:
+    - java21
+  only: 
+    - staging
+  script: 
+    - mvn clean install
+  artifacts:
+    paths: 
+        - target
+    expire_in: 1 days
+
+deploy_staging:
+  stage:  deploy_staging
+  tags:
+    - cultbooking-ci
+  only: 
+    - staging
+  script: 
+    - ssh gitlab-runner@$STAGING_SERVER "rm -rf STAGING_HOME/* && exit "
+    - scp  $STAGING_SRC gitlab-runner@$STAGING_SERVER:$STAGING_HOME 
+    - ssh gitlab-runner@$STAGING_SERVER "sudo systemctl stop cultdata-report.service && sleep 2 && sudo systemctl start cultdata-report && exit " 
+
+build_prod:
+  stage:  build_prod
+  tags: 
+    - java21
+  only: 
+    - production
+  script: 
+    - mvn clean install
+  artifacts:
+    paths: 
+        - target
+    expire_in: 1 days
+
+
+deploy_prod:
+  stage:  deploy_prod
+  tags:
+    - cultbooking-ci
+  only: 
+    - production
+  script: 
+    - ssh gitlab-runner@$PROD_SERVER "rm -rf PROD_HOME/* && exit "
+    - scp  $PROD_SRC gitlab-runner@$PROD_SERVER:$PROD_HOME 
+    - ssh gitlab-runner@$PROD_SERVER "sudo systemctl stop cultdata-report.service && sleep 2 && sudo systemctl start cultdata-report && exit " 
