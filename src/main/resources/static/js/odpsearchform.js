@@ -10,6 +10,7 @@ document.addEventListener('alpine:init', () => {
             distributionManagers: [],
             results: [],
             tomSelect: null,
+            allDMsOption: { id: 'all', name: 'All Distribution Managers' },
 
             init() {
                 this.fetchDistributionManagers();
@@ -22,86 +23,58 @@ document.addEventListener('alpine:init', () => {
             },
 
             // Tom Select initialization with plugins and event handling
-            initializeTomSelect() {
-                const selectEl = document.getElementById('distributionManagers');
-                if (selectEl) {
-                    this.tomSelect = new TomSelect(selectEl, {
-                        plugins: {
-                            dropdown_header: {
-                                title: '<div class="select-all-header" id="select-all-btn">✔ Select All</div>'
-                            },
-                            checkbox_options: {
-                                checkedClassNames: ['ts-checked'],
-                                uncheckedClassNames: ['ts-unchecked'],
-                            },
-                            remove_button: {},
-                            clear_button: {
-                                title: 'Remove all selected options'
+             initializeTomSelect() {
+                            const selectEl = document.getElementById('distributionManagers');
+                            if (selectEl) {
+                                const component = this;
+                                this.tomSelect = new TomSelect(selectEl, {
+                                    maxItems: 1,
+                                    onInitialize: function() {
+                                        this.setValue('all');
+                                        component.searchDTO.distributionManagers = [];
+                                    },
+                                    onChange: (value) => {
+                                        if (value === 'all') {
+                                            this.searchDTO.distributionManagers = [];
+                                        } else {
+                                            this.searchDTO.distributionManagers = value ? [parseInt(value, 10)] : [];
+                                        }
+                                    }
+                                });
                             }
                         },
-                        maxItems: null,
-                        autofocus: false, // Prevents auto-focus on dropdown
-                        onInitialize: function () {
-                            this.isSetup = true;
-                        },
-                        onDropdownOpen: () => {
-                            const allValues = Object.keys(this.tomSelect.options);
-                            document.getElementById('select-all-btn').onclick = () => {
-                                this.tomSelect.setValue(allValues);
-                                this.tomSelect.close();
-                            };
-                        },
-                        onItemAdd: () => {
-                            this.searchDTO.distributionManagers = [...this.tomSelect.items];
-                        },
-                        onItemRemove: () => {
-                            this.searchDTO.distributionManagers = [...this.tomSelect.items];
-                        }
-                    });
 
-                    // Select all items after initialization
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            const allValues = this.distributionManagers.map(dm => dm.id.toString());
-                            this.tomSelect.setValue(allValues);
-                            this.searchDTO.distributionManagers = allValues;
-                        }, 100);
-                    });
-                }
-            },
 
-            // Load distribution managers from API
-            async fetchDistributionManagers() {
-                try {
-                    this.loading = true;
-                    const response = await fetch('/odp/api/distribution-managers?onlyMapped=true');
+                // Load distribution managers from API
+                async fetchDistributionManagers() {
+                    try {
+                        this.loading = true;
+                        const response = await fetch('/odp/api/distribution-managers?onlyMapped=true');
 
-                    if (!response.ok) throw new Error('Network response was not ok');
+                        if (!response.ok) throw new Error('Network response was not ok');
 
-                    const data = await response.json();
-                    this.distributionManagers = data.map(dm => ({
-                        id: dm.id,
-                        name: `${dm.name} (${dm.id})`
-                    }));
+                        const data = await response.json();
+                        this.distributionManagers = [
+                            this.allDMsOption,
+                            ...data.map(dm => ({
+                                id: dm.id,
+                                name: `${dm.name} (${dm.id})`
+                            }))
+                        ];
 
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            this.refreshTomSelect();
+                        this.$nextTick(() => {
                             this.initializeTomSelect();
-                            const clientInput = document.getElementById('client');
-                            if (clientInput) {
-                                clientInput.focus();
-                            }
-                        }, 100);
-                    });
+                            document.getElementById('client')?.focus();
+                        });
 
-                } catch (error) {
-                    console.error('Error fetching distribution managers:', error);
-                    this.validationMessage = 'Failed to load distribution managers';
-                } finally {
-                    this.loading = false;
-                }
-            },
+                    } catch (error) {
+                        console.error('Error fetching distribution managers:', error);
+                        this.validationMessage = 'Failed to load distribution managers';
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
 
             // Refresh Tom Select options after data fetch
             refreshTomSelect() {
@@ -119,8 +92,14 @@ document.addEventListener('alpine:init', () => {
 
             // Perform search with given inputs
             async searchOdp() {
-                if (!this.searchDTO.client && this.searchDTO.distributionManagers.length === 0) {
-                    this.validationMessage = 'Please enter either a Client ID or one Distribution Manager';
+                const selectedValue = this.tomSelect?.getValue();
+                const isAllDMsSelected = selectedValue === 'all';
+
+                const hasClient = !!this.searchDTO.client;
+                const hasSpecificDM = !isAllDMsSelected && selectedValue;
+
+                if (!hasClient && !isAllDMsSelected && !hasSpecificDM) {
+                    this.validationMessage = 'Please enter either a Client ID or select a Distribution Manager';
                     return;
                 }
 
@@ -133,7 +112,11 @@ document.addEventListener('alpine:init', () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             client: this.searchDTO.client,
-                            distributionManagers: this.searchDTO.distributionManagers
+                            distributionManagers: isAllDMsSelected
+                                ? this.distributionManagers
+                                    .filter(dm => dm.id !== 'all')
+                                    .map(dm => dm.id)
+                                : [parseInt(selectedValue, 10)]
                         })
                     });
 
