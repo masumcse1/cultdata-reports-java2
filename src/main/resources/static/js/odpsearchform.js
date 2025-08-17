@@ -22,61 +22,58 @@ document.addEventListener('alpine:init', () => {
 
             },
 
-            // Tom Select initialization with plugins and event handling
-             initializeTomSelect() {
-                            const selectEl = document.getElementById('distributionManagers');
-                            if (selectEl) {
-                                const component = this;
-                                this.tomSelect = new TomSelect(selectEl, {
-                                    maxItems: 1,
-                                    onInitialize: function() {
-                                        this.setValue('all');
-                                        component.searchDTO.distributionManagers = [];
-                                    },
-                                    onChange: (value) => {
-                                        if (value === 'all') {
-                                            this.searchDTO.distributionManagers = [];
-                                        } else {
-                                            this.searchDTO.distributionManagers = value ? [parseInt(value, 10)] : [];
-                                        }
-                                    }
-                                });
-                            }
-                        },
-
-
-                // Load distribution managers from API
-                async fetchDistributionManagers() {
-                    try {
-                        this.loading = true;
-                        const response = await fetch('/odp/api/distribution-managers?onlyMapped=true');
-
-                        if (!response.ok) throw new Error('Network response was not ok');
-
-                        const data = await response.json();
-                        this.distributionManagers = [
-                            this.allDMsOption,
-                            ...data.map(dm => ({
-                                id: dm.id,
-                                name: `${dm.name} (${dm.id})`
-                            }))
-                        ];
-
-                        this.$nextTick(() => {
-                            this.initializeTomSelect();
-                            document.getElementById('client')?.focus();
-                        });
-
-                    } catch (error) {
-                        console.error('Error fetching distribution managers:', error);
-                        this.validationMessage = 'Failed to load distribution managers';
-                    } finally {
-                        this.loading = false;
+            initializeTomSelect() {
+            const selectEl = document.getElementById('distributionManagers');
+            if (selectEl) {
+                const component = this;
+                this.tomSelect = new TomSelect(selectEl, {
+                    maxItems: 1,
+                    onInitialize: function() {
+                        this.setValue('all');
+                        component.searchDTO.distributionManagers = [];
+                    },
+                    onChange: (value) => {
+                        if (value === 'all') {
+                            this.searchDTO.distributionManagers = [];
+                        } else {
+                            this.searchDTO.distributionManagers = value ? [parseInt(value, 10)] : [];
+                        }
                     }
-                },
+                });
+            }
+            },
 
 
-            // Refresh Tom Select options after data fetch
+            // Load distribution managers from API
+            async fetchDistributionManagers() {
+                try {
+                    this.loading = true;
+                    const response = await fetch('/odp/api/distribution-managers?onlyMapped=true');
+
+                    if (!response.ok) throw new Error('Network response was not ok');
+
+                    const data = await response.json();
+                    this.distributionManagers = [
+                        this.allDMsOption,
+                        ...data.map(dm => ({
+                            id: dm.id,
+                            name: `${dm.name} (${dm.id})`
+                        }))
+                    ];
+
+                    this.$nextTick(() => {
+                        this.initializeTomSelect();
+                        document.getElementById('client')?.focus();
+                    });
+
+                } catch (error) {
+                    console.error('Error fetching distribution managers:', error);
+                    this.validationMessage = 'Failed to load distribution managers';
+                } finally {
+                    this.loading = false;
+                }
+            },
+
             refreshTomSelect() {
                 if (!this.tomSelect) return;
 
@@ -90,7 +87,6 @@ document.addEventListener('alpine:init', () => {
                 this.tomSelect.refreshOptions();
             },
 
-            // Perform search with given inputs
             async searchOdp() {
                 const selectedValue = this.tomSelect?.getValue();
                 const isAllDMsSelected = selectedValue === 'all';
@@ -130,6 +126,7 @@ document.addEventListener('alpine:init', () => {
                     this.loading = false;
                 }
             },
+
             clearForm() {
                 // Reset search DTO while preserving the structure
                 this.searchDTO = {
