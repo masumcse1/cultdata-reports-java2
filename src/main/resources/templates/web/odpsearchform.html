@@ -48,9 +48,8 @@
                                 <div class="mb-3 row align-items-center">
                                     <label for="distributionManagers" class="col-md-2 col-form-label">Distribution Manager(s)</label>
                                     <div class="col-md-4">
-                                        <select id="distributionManagers" x-model="searchDTO.distributionManagers"
-                                                placeholder="Select ...." multiple>
-                                            <template x-for="dm in distributionManagers" :key="dm.id">
+                                        <select id="distributionManagers" x-model="searchDTO.distributionManagers" >
+                                           <template x-for="dm in distributionManagers" :key="dm.id">
                                                 <option :value="dm.id" x-text="dm.name" title="dm.name"></option>
                                             </template>
                                         </select>

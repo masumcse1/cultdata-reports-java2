@@ -74,19 +74,6 @@ document.addEventListener('alpine:init', () => {
                 }
             },
 
-            refreshTomSelect() {
-                if (!this.tomSelect) return;
-
-                this.tomSelect.clearOptions();
-                this.distributionManagers.forEach(dm => {
-                    this.tomSelect.addOption({
-                        value: dm.id,
-                        text: dm.name
-                    });
-                });
-                this.tomSelect.refreshOptions();
-            },
-
             async searchOdp() {
                 const selectedValue = this.tomSelect?.getValue();
                 const isAllDMsSelected = selectedValue === 'all';
@@ -128,24 +115,19 @@ document.addEventListener('alpine:init', () => {
             },
 
             clearForm() {
-                // Reset search DTO while preserving the structure
                 this.searchDTO = {
                     client: null,
-                    distributionManagers: [] // Clear selected managers
+                    distributionManagers: []
                 };
 
-                // Clear results and validation message
                 this.results = [];
                 this.validationMessage = '';
 
-                // Reset TomSelect if initialized (select all by default as per your init behavior)
-                if (this.tomSelect && this.distributionManagers.length > 0) {
-                    const allValues = this.distributionManagers.map(dm => dm.id.toString());
-                    this.tomSelect.setValue(allValues);
-                    this.searchDTO.distributionManagers = allValues;
+                if (this.tomSelect) {
+                    this.tomSelect.setValue('all');
+                    this.searchDTO.distributionManagers = [];
                 }
 
-                // Focus on client field after clearing (matching your init behavior)
                 this.$nextTick(() => {
                     const clientInput = document.getElementById('client');
                     if (clientInput) {
